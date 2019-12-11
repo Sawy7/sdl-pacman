@@ -72,22 +72,43 @@ void ghost_chase(Atom* a, Atom* b)
     if (a->rect.x > b->rect.x)
     {
         b->speed_x = 1;
-        //b->speed_y = 0;
     } else if (a->rect.x < b->rect.x) {
         b->speed_x = -1;
-        //b->speed_y = 0;
     } else if (a->rect.x == b->rect.x) {
         b->speed_x = 0;
     }
     if (a->rect.y > b->rect.y)
     {
-        //b->speed_x = 0;
         b->speed_y = 1;
     } else if (a->rect.y < b->rect.y) {
-        //b->speed_x = 0;
         b->speed_y = -1;
     } else if (a->rect.y == b->rect.y) {
         b->speed_y = 0;
+    }
+}
+
+void ghost_chase_imp(Atom* a, Atom* b)
+{
+    int xabs = abs(a->rect.x - b->rect.x);
+    int yabs = abs(a->rect.y - b->rect.y);
+    int speed = 1;
+    if (xabs >= yabs)
+    {
+        b->speed_y = 0;
+        if (a->rect.x > b->rect.x)
+        {
+            b->speed_x = speed;
+        } else {
+            b->speed_x = -speed;
+        }        
+    } else {
+        b->speed_x = 0;
+        if (a->rect.y > b->rect.y)
+        {
+            b->speed_y = speed;
+        } else {
+            b->speed_y = -speed;
+        }
     }
 }
 
@@ -472,7 +493,7 @@ int main()
             //ghost render
             SDL_RenderCopyEx(ren, gtexture, NULL, &(ghost->rect), 0, NULL, SDL_FLIP_NONE);
             atom_move(ghost);
-            ghost_chase(pacman, ghost);  
+            ghost_chase_imp(pacman, ghost);  
 
         } else {
             //Rendering scoreboard
