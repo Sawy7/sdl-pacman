@@ -258,6 +258,27 @@ char* read_map(int r)
     return marray;    
 }
 
+Text** read_scoreboard(TTF_Font* font, SDL_Renderer* ren)
+{
+    int count = 5;
+    Text** array = (Text**) malloc(sizeof(Text)*6);
+    FILE* f = fopen("scoreboard.txt", "r");
+    char name[10];
+    int score;
+    char score_str[6];
+    for (int i = 0; i < count; i++)
+    {
+        fscanf(f,"%s\t%d", &name, &score);
+        sprintf(score_str, "      %d", score);
+        strcat(name, score_str);
+        array[i] = gen_text(name, font, ren, 500, 100+35*i);
+        //printf("%s\n", name);
+    }
+    array[5] = gen_text("Press RETURN to proceed...", font, ren, 500, 350);
+    fclose(f);
+    return array;
+}
+
 int main()
 {
     srand(time(NULL));
@@ -364,6 +385,7 @@ int main()
     
     double angle = 0;
     int life = 5;
+    
     bool scoreboard = true;
 
     bool quit = false;
@@ -501,6 +523,15 @@ int main()
             scoreboard->text_field->rect.x = (WINDOW_WIDTH / 2) - (scoreboard->width / 2);
             SDL_RenderCopyEx(ren, scoreboard->texture, NULL, &(scoreboard->text_field->rect), 0, NULL, SDL_FLIP_NONE);
             SDL_DestroyTexture(scoreboard->texture);
+
+            Text** scoreboard_entry = read_scoreboard(font, ren);
+            for (int i = 0; i < 6; i++)
+            {
+                scoreboard_entry[i]->text_field->rect.x = (WINDOW_WIDTH / 2) - (scoreboard_entry[i]->width / 2);
+                SDL_RenderCopyEx(ren, scoreboard_entry[i]->texture, NULL, &(scoreboard_entry[i]->text_field->rect), 0, NULL, SDL_FLIP_NONE);
+                SDL_DestroyTexture(scoreboard_entry[i]->texture);
+            }
+                        
             
             //gen_text("...", font, ren, 330, 50);
             //gen_text("Honza - 1000 pts", font, ren, 330, 80);
