@@ -263,20 +263,48 @@ Text** read_scoreboard(TTF_Font* font, SDL_Renderer* ren)
     int count = 5;
     Text** array = (Text**) malloc(sizeof(Text)*6);
     FILE* f = fopen("scoreboard.txt", "r");
-    char name[10];
     int score;
     char score_str[6];
     for (int i = 0; i < count; i++)
     {
-        fscanf(f,"%s\t%d", &name, &score);
-        sprintf(score_str, "      %d", score);
-        strcat(name, score_str);
-        array[i] = gen_text(name, font, ren, 500, 100+35*i);
-        //printf("%s\n", name);
+        fscanf(f,"%d", &score);
+        sprintf(score_str, "%d", score);
+        array[i] = gen_text(score_str, font, ren, 500, 100+35*i);
+        //printf("%s\n", score_str);
     }
     array[5] = gen_text("Press RETURN to proceed...", font, ren, 500, 350);
     fclose(f);
     return array;
+}
+
+void endgame(int life, int pointCount, int pointTotal)
+{
+    int count = 5;
+    int latestScore = pointTotal - pointCount;
+    int score;
+    if (life == 0 || pointCount == 0)
+    {
+        FILE* f = fopen("scoreboard.txt", "r");
+        int newScores[5];
+        for (int i = 0; i < count; i++)
+        {
+            fscanf(f,"%d", &score);
+            if (score < latestScore)
+            {
+                newScores[i] = latestScore;
+                newScores[i+1] = score;
+                i += 1;
+            } else {
+                newScores[i] = score;
+            }
+        }
+        fclose(f);
+        FILE* g = fopen("scoreboard.txt", "w");
+        for (int i = 0; i < count; i++)
+        {
+            fprintf(g, "%d\n", newScores[i]);
+        }
+    }
 }
 
 int main()
@@ -437,18 +465,24 @@ int main()
 
         if (scoreboard != true)
         {
-           //multiple points
-            for (int i = 0; i < ((WINDOW_WIDTH/array[0].rect.h)*(WINDOW_HEIGHT/array[0].rect.h)); i++)
+            int screenCount = ((WINDOW_WIDTH/array[0].rect.h)*(WINDOW_HEIGHT/array[0].rect.h));
+            int pointCount = 0;
+            int pointTotal = screenCount;
+
+            //multiple points
+            for (int i = 0; i < screenCount; i++)
             {
                 if (array[i].nexist !=1 && marray[i] == '.')
                 {
                     SDL_RenderCopyEx(ren, ptexture, NULL, &(array[i].rect), 0, NULL, SDL_FLIP_NONE);
                     eat(pacman, &array[i]);
+                    pointCount += 1;
                 }
-            }        
+            }
+            //printf("How many points: %d\n", pointCount);
 
             //multiple walls
-            for (int i = 0; i < ((WINDOW_WIDTH/array[0].rect.h)*(WINDOW_HEIGHT/array[0].rect.h)); i++)
+            for (int i = 0; i < screenCount; i++)
             {
                 if (marray[i] == '#')
                 {
@@ -457,8 +491,10 @@ int main()
                     SDL_RenderCopyEx(ren, NULL, NULL, &(array[i].rect), 0, NULL, SDL_FLIP_NONE);
                     atom_collision(pacman, &(array[i]));
                     atom_collision(ghost, &(array[i]));
+                    pointTotal -= 1;
                 }
             }
+            printf("How many points TOTAL: %d\n", pointTotal);
 
             //count points
             int score = point_count(array);
@@ -466,6 +502,8 @@ int main()
             char strscore[10];
             sprintf(strscore, "%d", score);
 
+            //endgame
+            endgame(life, pointCount, pointTotal);
             
             //score text render
             char stext[20] = "Score: ";
@@ -509,6 +547,7 @@ int main()
             } else {
                 life = 0;
                 printf("Final score: %d\n", score);
+                endgame(life, pointCount, pointTotal);
                 quit = true;
             }
 
@@ -519,7 +558,7 @@ int main()
 
         } else {
             //Rendering scoreboard
-            Text* scoreboard = gen_text("Scoreboard", font, ren, 500, 20);
+            Text* scoreboard = gen_text("Best Scores:", font, ren, 500, 20);
             scoreboard->text_field->rect.x = (WINDOW_WIDTH / 2) - (scoreboard->width / 2);
             SDL_RenderCopyEx(ren, scoreboard->texture, NULL, &(scoreboard->text_field->rect), 0, NULL, SDL_FLIP_NONE);
             SDL_DestroyTexture(scoreboard->texture);
