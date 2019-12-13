@@ -57,6 +57,13 @@ build CMakeFiles/sdl.dir/sdl.c.o: C_COMPILER__sdl ../sdl.c || cmake_object_order
   OBJECT_DIR = CMakeFiles/sdl.dir
   OBJECT_FILE_DIR = CMakeFiles/sdl.dir
 
+build CMakeFiles/sdl.dir/pacman.c.o: C_COMPILER__sdl ../pacman.c || cmake_object_order_depends_target_sdl
+  DEP_FILE = CMakeFiles/sdl.dir/pacman.c.o.d
+  FLAGS = -g
+  INCLUDES = -I/usr/include/SDL2
+  OBJECT_DIR = CMakeFiles/sdl.dir
+  OBJECT_FILE_DIR = CMakeFiles/sdl.dir
+
 
 # =============================================================================
 # Link build statements for EXECUTABLE target sdl
@@ -65,7 +72,7 @@ build CMakeFiles/sdl.dir/sdl.c.o: C_COMPILER__sdl ../sdl.c || cmake_object_order
 #############################################
 # Link the executable sdl
 
-build sdl: C_EXECUTABLE_LINKER__sdl CMakeFiles/sdl.dir/sdl.c.o
+build sdl: C_EXECUTABLE_LINKER__sdl CMakeFiles/sdl.dir/sdl.c.o CMakeFiles/sdl.dir/pacman.c.o
   FLAGS = -g
   LINK_LIBRARIES = -L/usr/lib64  -lSDL2  -lSDL2_image  -lSDL2_ttf
   OBJECT_DIR = CMakeFiles/sdl.dir
