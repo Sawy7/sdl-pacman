@@ -61,9 +61,50 @@ int main()
         SDL_Quit();
         return 1;
     }
-
     SDL_Texture* gtexture = SDL_CreateTextureFromSurface(ren, img);
     if(!gtexture)
+    {
+        fprintf(stderr, "SDL_CreateTextureFromSurface Error: %s", SDL_GetError()); 
+        SDL_Quit();
+        return 1;
+    }
+    img = IMG_Load("ghost2.png");
+    if(!img)
+    {
+        fprintf(stderr, "SDL_IMG_Load Error: %s", SDL_GetError()); 
+        SDL_Quit();
+        return 1;
+    }
+    SDL_Texture* g2texture = SDL_CreateTextureFromSurface(ren, img);
+    if(!g2texture)
+    {
+        fprintf(stderr, "SDL_CreateTextureFromSurface Error: %s", SDL_GetError()); 
+        SDL_Quit();
+        return 1;
+    }
+    img = IMG_Load("ghost3.png");
+    if(!img)
+    {
+        fprintf(stderr, "SDL_IMG_Load Error: %s", SDL_GetError()); 
+        SDL_Quit();
+        return 1;
+    }
+    SDL_Texture* g3texture = SDL_CreateTextureFromSurface(ren, img);
+    if(!g3texture)
+    {
+        fprintf(stderr, "SDL_CreateTextureFromSurface Error: %s", SDL_GetError()); 
+        SDL_Quit();
+        return 1;
+    }
+    img = IMG_Load("ghost4.png");
+    if(!img)
+    {
+        fprintf(stderr, "SDL_IMG_Load Error: %s", SDL_GetError()); 
+        SDL_Quit();
+        return 1;
+    }
+    SDL_Texture* g4texture = SDL_CreateTextureFromSurface(ren, img);
+    if(!g4texture)
     {
         fprintf(stderr, "SDL_CreateTextureFromSurface Error: %s", SDL_GetError()); 
         SDL_Quit();
@@ -80,7 +121,7 @@ int main()
     }
 
     SDL_Texture* ptexture = SDL_CreateTextureFromSurface(ren, img);
-    if(!gtexture)
+    if(!ptexture)
     {
         fprintf(stderr, "SDL_CreateTextureFromSurface Error: %s", SDL_GetError()); 
         SDL_Quit();
@@ -97,12 +138,24 @@ int main()
     int pcm_y = 20;
     int pcm_sx = 2;
     int pcm_sy = 0;
-    Atom* pacman = atom_create(pcm_x, pcm_y, pcm_r, pcm_r, pcm_sx, pcm_sy);
+    Entity* pacman = entity_create(pcm_x, pcm_y, pcm_r, pcm_r, pcm_sx, pcm_sy);
 
-    Atom* ghost = atom_create(200, 300, 40, 40, 0, 0);
+    //ghost defined
+    Entity* ghost = entity_create(60, 100, 20, 20, 0, 0);
+    Entity* ghost2 = entity_create(WINDOW_WIDTH-80, 100, 20, 20, 0, 0);
+    Entity* ghost3 = entity_create(60, WINDOW_HEIGHT-120, 20, 20, 0, 0);
+    Entity* ghost4 = entity_create(WINDOW_WIDTH-80, WINDOW_HEIGHT-120, 20, 20, 0, 0);
+
 
     //generate points
-    Atom* array = point_gen(20);
+    Entity* array = point_gen(20);
+    
+    //keeping score
+    int screenCount = ((WINDOW_WIDTH/array[0].rect.h)*(WINDOW_HEIGHT/array[0].rect.h));
+    int pointTotal;
+    int pointCount;
+    int score;
+
     
     double angle = 0;
     int life = 5;
@@ -116,6 +169,7 @@ int main()
         {
             if (e.type == SDL_QUIT)
             {
+                endgame(array);
                 quit = true;
             }
             //key events
@@ -123,6 +177,7 @@ int main()
             {
                 if (e.key.keysym.sym == SDLK_r)
                 {
+                    endgame(array);
                     quit = true;
                 }
                 if (e.key.keysym.sym == SDLK_RETURN)
@@ -158,10 +213,7 @@ int main()
 
         if (scoreboard != true)
         {
-            int screenCount = ((WINDOW_WIDTH/array[0].rect.h)*(WINDOW_HEIGHT/array[0].rect.h));
-            int pointCount = 0;
-            int pointTotal = screenCount;
-
+            pointCount = 0;
             //multiple points
             for (int i = 0; i < screenCount; i++)
             {
@@ -175,6 +227,7 @@ int main()
             //printf("How many points: %d\n", pointCount);
 
             //multiple walls
+            pointTotal = screenCount;
             for (int i = 0; i < screenCount; i++)
             {
                 if (marray[i] == '#')
@@ -182,11 +235,15 @@ int main()
                     SDL_SetRenderDrawColor(ren, 100, 100, 100, 255);
                     SDL_RenderFillRect(ren, &array[i].rect);
                     SDL_RenderCopyEx(ren, NULL, NULL, &(array[i].rect), 0, NULL, SDL_FLIP_NONE);
-                    atom_collision(pacman, &(array[i]));
-                    atom_collision(ghost, &(array[i]));
+                    entity_collision(pacman, &(array[i]));
+                    ghost_collision(ghost, &(array[i]));
+                    ghost_collision(ghost2, &(array[i]));
+                    ghost_collision(ghost3, &(array[i]));
+                    ghost_collision(ghost4, &(array[i]));
                     pointTotal -= 1;
                 }
             }
+            
             //printf("How many points TOTAL: %d\n", pointTotal);
 
             //count points
@@ -194,9 +251,6 @@ int main()
             //printf("%d\n", score);
             char strscore[10];
             sprintf(strscore, "%d", score);
-
-            //endgame
-            endgame(life, pointCount, pointTotal);
             
             //score text render
             char stext[20] = "Score: ";
@@ -209,7 +263,7 @@ int main()
             SDL_RenderCopyEx(ren, scorecount->texture, NULL, &(scorecount->text_field->rect), 0, NULL, SDL_FLIP_NONE);
             SDL_DestroyTexture(scorecount->texture);
 
-            //life text rende
+            //life text render
             char strlife[10];
             sprintf(strlife, "%d", life);
             char ltext[20] = "Lifes: ";
@@ -226,8 +280,20 @@ int main()
             if (pacman->nexist == 0)
             {
                 SDL_RenderCopyEx(ren, texture, NULL, &(pacman->rect), angle, NULL, SDL_FLIP_NONE);
-                atom_move(pacman);
+                entity_move(pacman);
                 eat(ghost, pacman);
+                if (pacman->nexist == 0)
+                {
+                    eat(ghost2, pacman);
+                }
+                if (pacman->nexist == 0)
+                {
+                    eat(ghost3, pacman);
+                }
+                if (pacman->nexist == 0)
+                {
+                    eat(ghost4, pacman);
+                }
             } else if (life > 1) {
                 life -= 1;
                 printf("life: %d\n", life);
@@ -240,14 +306,30 @@ int main()
             } else {
                 life = 0;
                 printf("Final score: %d\n", score);
-                endgame(life, pointCount, pointTotal);
+                endgame(array);
                 quit = true;
             }
 
             //ghost render
             SDL_RenderCopyEx(ren, gtexture, NULL, &(ghost->rect), 0, NULL, SDL_FLIP_NONE);
-            atom_move(ghost);
-            ghost_chase_imp(pacman, ghost);  
+            entity_move(ghost);
+            ghost_chase_imp(pacman, ghost);
+            SDL_RenderCopyEx(ren, g2texture, NULL, &(ghost2->rect), 0, NULL, SDL_FLIP_NONE);
+            entity_move(ghost2);
+            ghost_chase_imp(pacman, ghost2);
+            SDL_RenderCopyEx(ren, g3texture, NULL, &(ghost3->rect), 0, NULL, SDL_FLIP_NONE);
+            entity_move(ghost3);
+            ghost_chase_imp(pacman, ghost3);
+            SDL_RenderCopyEx(ren, g4texture, NULL, &(ghost4->rect), 0, NULL, SDL_FLIP_NONE);
+            entity_move(ghost4);
+            ghost_chase_imp(pacman, ghost4);
+
+            //ghost sectors
+            ghost_boundaries(ghost, 0);
+            ghost_boundaries(ghost2, 1);
+            ghost_boundaries(ghost3, 2);
+            ghost_boundaries(ghost4, 3);
+
 
         } else {
             //Rendering scoreboard
@@ -268,9 +350,12 @@ int main()
     }
     
     //flush ram
-    atom_delete(pacman);
-    atom_delete(ghost);
-    atom_delete(array);
+    entity_delete(pacman);
+    entity_delete(ghost);
+    entity_delete(ghost2);
+    entity_delete(ghost3);
+    entity_delete(ghost4);
+    entity_delete(array);
 
     SDL_DestroyTexture(texture);
 

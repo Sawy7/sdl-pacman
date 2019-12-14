@@ -15,28 +15,30 @@ typedef struct
     int speed_x;
     int speed_y;
     int nexist;
-} Atom;
+} Entity;
 
 typedef struct
 {
     SDL_Texture* texture;
-    Atom* text_field;
+    Entity* text_field;
     int width;
     int height;
 } Text;
 
 
-Atom* atom_create(int pos_x, int pos_y, int w, int h, int speed_x, int speed_y);
-void atom_delete(Atom* a);
-void atom_move(Atom* a);
-void ghost_chase(Atom* a, Atom* b);
-void ghost_chase_imp(Atom* a, Atom* b);
-void atom_collision(Atom* a, Atom* wall);
-void eat (Atom* a, Atom* p);
-Atom* point_gen (int r);
-int point_count (Atom array[]);
-void just_go(Atom* a, char direction[]);
+Entity* entity_create(int pos_x, int pos_y, int w, int h, int speed_x, int speed_y);
+void entity_delete(Entity* a);
+void entity_move(Entity* a);
+void ghost_chase(Entity* a, Entity* b);
+void ghost_chase_imp(Entity* a, Entity* b);
+void entity_collision(Entity* a, Entity* wall);
+void ghost_collision(Entity* a, Entity* wall);
+void ghost_boundaries(Entity* a, int sector);
+void eat (Entity* a, Entity* p);
+Entity* point_gen (int r);
+int point_count (Entity array[]);
+void just_go(Entity* a, char direction[]);
 Text* gen_text(char text[], TTF_Font* font, SDL_Renderer* ren, int x, int y);
 char* read_map(int r);
 Text** read_scoreboard(TTF_Font* font, SDL_Renderer* ren);
-void endgame(int life, int pointCount, int pointTotal);
+void endgame(Entity array[]);

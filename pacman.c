@@ -1,8 +1,8 @@
 #include "pacman.h"
 
-Atom* atom_create(int pos_x, int pos_y, int w, int h, int speed_x, int speed_y)
+Entity* entity_create(int pos_x, int pos_y, int w, int h, int speed_x, int speed_y)
 {
-    Atom* a = (Atom*) malloc(sizeof(Atom));
+    Entity* a = (Entity*) malloc(sizeof(Entity));
     a->rect.x = pos_x;
     a->rect.y = pos_y;
     a->rect.w = w;
@@ -13,12 +13,12 @@ Atom* atom_create(int pos_x, int pos_y, int w, int h, int speed_x, int speed_y)
     return a;
 }
 
-void atom_delete(Atom* a)
+void entity_delete(Entity* a)
 {
     free(a);
 }
 
-void atom_move(Atom* a)
+void entity_move(Entity* a)
 {
     a->rect.x += a->speed_x;
     a->rect.y += a->speed_y;
@@ -41,7 +41,7 @@ void atom_move(Atom* a)
     }
 }
 
-void ghost_chase(Atom* a, Atom* b)
+void ghost_chase(Entity* a, Entity* b)
 {
     if (a->rect.x > b->rect.x)
     {
@@ -61,7 +61,7 @@ void ghost_chase(Atom* a, Atom* b)
     }
 }
 
-void ghost_chase_imp(Atom* a, Atom* b)
+void ghost_chase_imp(Entity* a, Entity* b)
 {
     int xabs = abs(a->rect.x - b->rect.x);
     int yabs = abs(a->rect.y - b->rect.y);
@@ -86,7 +86,7 @@ void ghost_chase_imp(Atom* a, Atom* b)
     }
 }
 
-void atom_collision(Atom* a, Atom* wall)
+void entity_collision(Entity* a, Entity* wall)
 {
     //Player
     int a_left = a->rect.x;
@@ -120,7 +120,91 @@ void atom_collision(Atom* a, Atom* wall)
     }
 }
 
-void eat (Atom* a, Atom* p)
+void ghost_collision(Entity* a, Entity* wall)
+{
+    int speed = 1;
+    //Ghost
+    int a_left = a->rect.x;
+    int a_right = a->rect.x + a->rect.w;
+    int a_top = a->rect.y;
+    int a_bottom = a->rect.y + a->rect.h;
+    //Wall
+    int wall_left = wall->rect.x;
+    int wall_right = wall->rect.x + wall->rect.w;
+    int wall_top = wall->rect.y;
+    int wall_bottom = wall->rect.y + wall->rect.h;
+    if (a_bottom > wall_top && a_bottom < (wall_top + (wall->rect.h*0.25)) && a->speed_y > 0 && a_right > wall_left && a_left < wall_right)
+    {
+        a->speed_y = 0;
+        a->speed_x = speed;
+        a->rect.y = wall_top - a->rect.h;
+    }
+    if (a_top < wall_bottom && a_top > (wall_bottom - (wall->rect.h*0.25)) && a->speed_y < 0 && a_right > wall_left && a_left < wall_right)
+    {
+        a->speed_y = 0;
+        a->speed_x = speed;
+        a->rect.y = wall_bottom;
+    }
+    if (a_right > wall_left && a_right < (wall_left + (wall->rect.w*0.25)) && a->speed_x > 0 && a_bottom > wall_top && a_top < wall_bottom)
+    {
+        a->speed_x = 0;
+        a->speed_y = speed;
+        a->rect.x = wall_left - a->rect.w;
+    }
+    if (a_left < wall_right && a_left > (wall_right - (wall->rect.w*0.25)) && a->speed_x < 0 && a_bottom > wall_top && a_top < wall_bottom)
+    {
+        a->speed_x = 0;
+        a->speed_y = speed;
+        a->rect.x = wall_right;
+    }
+}
+
+void ghost_boundaries(Entity* a, int sector)
+{
+    int v_divide = WINDOW_WIDTH/2;
+    int h_divide = WINDOW_HEIGHT/2;
+
+    if (sector == 0)
+    {
+        if (a->rect.x+a->rect.w >= v_divide)
+        {
+            a->rect.x = v_divide - a->rect.w;
+        }
+        if (a->rect.y+a->rect.h >= h_divide)
+        {
+            a->rect.y = h_divide - a->rect.h;
+        }
+    } else if (sector == 1) {
+        if (a->rect.x <= v_divide)
+        {
+            a->rect.x = v_divide;
+        }
+        if (a->rect.y+a->rect.h >= h_divide)
+        {
+            a->rect.y = h_divide - a->rect.h;
+        }
+    } else if (sector == 2) {
+        if (a->rect.x+a->rect.w >= v_divide)
+        {
+            a->rect.x = v_divide - a->rect.w;
+        }
+        if (a->rect.y <= h_divide)
+        {
+            a->rect.y = h_divide;
+        }
+    } else if (sector == 3) {
+        if (a->rect.x <= v_divide)
+        {
+            a->rect.x = v_divide;
+        }
+        if (a->rect.y <= h_divide)
+        {
+            a->rect.y = h_divide;
+        }
+    }
+}
+
+void eat (Entity* a, Entity* p)
 {
     int state = 0;
     ///Player
@@ -140,23 +224,23 @@ void eat (Atom* a, Atom* p)
     p->nexist = state;
 }
 
-Atom* point_gen (int r)
+Entity* point_gen (int r)
 {
     int rows = (WINDOW_HEIGHT/r);
     int cols = (WINDOW_WIDTH/r);
     int count = cols * rows;
-    Atom* array = (Atom*) malloc(sizeof(Atom)*count);
+    Entity* array = (Entity*) malloc(sizeof(Entity)*count);
     for (int i = 0; i < rows; i++)
     {
         for (int j = 0; j < cols; j++)
         {
-            array[i*cols+j] = *(atom_create(j*r, i*r, r, r, 0, 0));
+            array[i*cols+j] = *(entity_create(j*r, i*r, r, r, 0, 0));
         }
     }
     return array;    
 }
 
-int point_count (Atom array[])
+int point_count (Entity array[])
 {
     int count = (WINDOW_WIDTH/array[0].rect.w) * (WINDOW_HEIGHT/array[0].rect.w);
     //printf("count: %d\n", count);
@@ -169,7 +253,7 @@ int point_count (Atom array[])
     return score;
 }
 
-void just_go(Atom* a, char direction[])
+void just_go(Entity* a, char direction[])
 {
     if (direction == "left")
     {
@@ -196,7 +280,7 @@ Text* gen_text(char text[], TTF_Font* font, SDL_Renderer* ren, int x, int y)
     int width;
     int height;
     SDL_QueryTexture(texture, NULL, NULL, &width, &height); 
-    Atom* text_field = atom_create(x, y, width, height, 0, 0);
+    Entity* text_field = entity_create(x, y, width, height, 0, 0);
     Text* t_field_ret = (Text*) malloc(sizeof(Text));
     t_field_ret->text_field = text_field;
     t_field_ret->texture = texture;
@@ -239,11 +323,11 @@ Text** read_scoreboard(TTF_Font* font, SDL_Renderer* ren)
     Text** array = (Text**) malloc(sizeof(Text)*6);
     FILE* f = fopen("scoreboard.txt", "r");
     int score;
-    char score_str[6];
+    char score_str[10];
     for (int i = 0; i < count; i++)
     {
         fscanf(f,"%d", &score);
-        sprintf(score_str, "%d", score);
+        sprintf(score_str, "%d.     %d", (i+1), score);
         array[i] = gen_text(score_str, font, ren, 500, 100+35*i);
         //printf("%s\n", score_str);
     }
@@ -252,32 +336,34 @@ Text** read_scoreboard(TTF_Font* font, SDL_Renderer* ren)
     return array;
 }
 
-void endgame(int life, int pointCount, int pointTotal)
+void endgame(Entity array[])
 {
+    int latestScore = point_count (array);
     int count = 5;
-    int latestScore = pointTotal - pointCount;
+    printf("latest score: %d\n", latestScore);
+    //printf("latest score: %d\n", latestScore);
     int score;
-    if (life == 0 || pointCount == 0)
+
+    FILE* f = fopen("scoreboard.txt", "r");
+    int newScores[5];
+    for (int i = 0; i < count; i++)
     {
-        FILE* f = fopen("scoreboard.txt", "r");
-        int newScores[5];
-        for (int i = 0; i < count; i++)
+        fscanf(f,"%d", &score);
+        if (score < latestScore)
         {
-            fscanf(f,"%d", &score);
-            if (score < latestScore)
-            {
-                newScores[i] = latestScore;
-                newScores[i+1] = score;
-                i += 1;
-            } else {
-                newScores[i] = score;
-            }
+            newScores[i] = latestScore;
+            newScores[i+1] = score;
+            latestScore = 0;
+            i += 1;
+        } else {
+            newScores[i] = score;
         }
-        fclose(f);
-        FILE* g = fopen("scoreboard.txt", "w");
-        for (int i = 0; i < count; i++)
-        {
-            fprintf(g, "%d\n", newScores[i]);
-        }
+    }
+    fclose(f);
+    FILE* g = fopen("scoreboard.txt", "w");
+    for (int i = 0; i < count; i++)
+    {
+        fprintf(g, "%d\n", newScores[i]);
+        printf("saving score: %d\n", newScores[i]);
     }
 }
