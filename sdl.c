@@ -186,21 +186,49 @@ int main()
                 }
                 if (e.key.keysym.sym == SDLK_LEFT)
                 {
+                    int y_correction = pacman->rect.y % pacman->rect.h;
+                    if (y_correction < pacman->rect.h/2)
+                    {
+                        pacman->rect.y -= y_correction;
+                    } else {
+                        pacman->rect.y = pacman->rect.y - y_correction + pacman->rect.h;
+                    }
                     just_go(pacman, "left");
                     angle = 180;
                 }
                 if (e.key.keysym.sym == SDLK_RIGHT)
                 {
+                    int y_correction = pacman->rect.y % pacman->rect.h;
+                    if (y_correction < pacman->rect.h/2)
+                    {
+                        pacman->rect.y -= y_correction;
+                    } else {
+                        pacman->rect.y = pacman->rect.y - y_correction + pacman->rect.h;
+                    }
                     just_go(pacman, "right");
                     angle = 0;
                 }
                 if (e.key.keysym.sym == SDLK_UP)
                 {
+                    int x_correction = pacman->rect.x % pacman->rect.w;
+                    if (x_correction < pacman->rect.w/2)
+                    {
+                        pacman->rect.x -= x_correction;
+                    } else {
+                        pacman->rect.x = pacman->rect.x - x_correction + pacman->rect.w;
+                    }  
                     just_go(pacman, "up");
                     angle = -90;
                 }
                 if (e.key.keysym.sym == SDLK_DOWN)
                 {
+                    int x_correction = pacman->rect.x % pacman->rect.w;
+                    if (x_correction < pacman->rect.w/2)
+                    {
+                        pacman->rect.x -= x_correction;
+                    } else {
+                        pacman->rect.x = pacman->rect.x - x_correction + pacman->rect.w;
+                    }                   
                     just_go(pacman, "down");
                     angle = 90;
                 }
@@ -208,11 +236,13 @@ int main()
         }
 
         //render background
-        SDL_SetRenderDrawColor(ren, 0, 0, 0, 255);
+        SDL_SetRenderDrawColor(ren, 0, 89, 179, 255);
         SDL_RenderClear(ren);
 
         if (scoreboard != true)
         {
+            SDL_SetRenderDrawColor(ren, 0, 0, 0, 255);
+            SDL_RenderClear(ren);
             pointCount = 0;
             //multiple points
             for (int i = 0; i < screenCount; i++)

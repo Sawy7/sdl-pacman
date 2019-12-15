@@ -331,7 +331,7 @@ Text** read_scoreboard(TTF_Font* font, SDL_Renderer* ren)
         array[i] = gen_text(score_str, font, ren, 500, 100+35*i);
         //printf("%s\n", score_str);
     }
-    array[5] = gen_text("Press RETURN to proceed...", font, ren, 500, 350);
+    array[5] = gen_text("Press RETURN to proceed...", font, ren, 500, WINDOW_HEIGHT-100);
     fclose(f);
     return array;
 }
