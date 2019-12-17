@@ -253,19 +253,19 @@ int point_count (Entity array[])
     return score;
 }
 
-void just_go(Entity* a, char direction[])
+void just_go(Entity* a, char direction)
 {
-    if (direction == "left")
+    if (direction == 'l')
     {
         a->speed_x = -2;
         a->speed_y = 0;
-    } else if (direction == "right") {
+    } else if (direction == 'r') {
         a->speed_x = 2;
         a->speed_y = 0;
-    } else if (direction == "up") {
+    } else if (direction == 'u') {
         a->speed_x = 0;
         a->speed_y = -2;
-    } else if (direction == "down") {
+    } else if (direction == 'd') {
         a->speed_x = 0;
         a->speed_y = 2;
     }

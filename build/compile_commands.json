@@ -1,13 +1,12 @@
 [
 {
-  "directory": "/home/sawy/Insync/nemec.jan123@gmail.com/OneDrive/VŠ/Předměty/Úvod do programování/Homework/Final/sdl/build",
-  "command": "/usr/bin/x86_64-solus-linux-gcc-9  -I/usr/include/SDL2  -g   -o CMakeFiles/sdl.dir/sdl.c.o   -c \"/home/sawy/Insync/nemec.jan123@gmail.com/OneDrive/VŠ/Předměty/Úvod do programování/Homework/Final/sdl/sdl.c\"",
-  "file": "/home/sawy/Insync/nemec.jan123@gmail.com/OneDrive/VŠ/Předměty/Úvod do programování/Homework/Final/sdl/sdl.c"
+  "directory": "/home/sawy/skola/sdl-pacman/build",
+  "command": "/bin/gcc-9  -I/usr/include/SDL2  -g   -o CMakeFiles/sdl.dir/sdl.c.o   -c /home/sawy/skola/sdl-pacman/sdl.c",
+  "file": "/home/sawy/skola/sdl-pacman/sdl.c"
 },
-
 {
-  "directory": "/home/sawy/Insync/nemec.jan123@gmail.com/OneDrive/VŠ/Předměty/Úvod do programování/Homework/Final/sdl/build",
-  "command": "/usr/bin/x86_64-solus-linux-gcc-9  -I/usr/include/SDL2  -g   -o CMakeFiles/sdl.dir/pacman.c.o   -c \"/home/sawy/Insync/nemec.jan123@gmail.com/OneDrive/VŠ/Předměty/Úvod do programování/Homework/Final/sdl/pacman.c\"",
-  "file": "/home/sawy/Insync/nemec.jan123@gmail.com/OneDrive/VŠ/Předměty/Úvod do programování/Homework/Final/sdl/pacman.c"
+  "directory": "/home/sawy/skola/sdl-pacman/build",
+  "command": "/bin/gcc-9  -I/usr/include/SDL2  -g   -o CMakeFiles/sdl.dir/pacman.c.o   -c /home/sawy/skola/sdl-pacman/pacman.c",
+  "file": "/home/sawy/skola/sdl-pacman/pacman.c"
 }
 ]

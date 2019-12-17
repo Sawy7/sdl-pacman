@@ -37,7 +37,7 @@ void ghost_boundaries(Entity* a, int sector);
 void eat (Entity* a, Entity* p);
 Entity* point_gen (int r);
 int point_count (Entity array[]);
-void just_go(Entity* a, char direction[]);
+void just_go(Entity* a, char direction);
 Text* gen_text(char text[], TTF_Font* font, SDL_Renderer* ren, int x, int y);
 char* read_map(int r);
 Text** read_scoreboard(TTF_Font* font, SDL_Renderer* ren);

@@ -193,7 +193,7 @@ int main()
                     } else {
                         pacman->rect.y = pacman->rect.y - y_correction + pacman->rect.h;
                     }
-                    just_go(pacman, "left");
+                    just_go(pacman, 'l');
                     angle = 180;
                 }
                 if (e.key.keysym.sym == SDLK_RIGHT)
@@ -205,7 +205,7 @@ int main()
                     } else {
                         pacman->rect.y = pacman->rect.y - y_correction + pacman->rect.h;
                     }
-                    just_go(pacman, "right");
+                    just_go(pacman, 'r');
                     angle = 0;
                 }
                 if (e.key.keysym.sym == SDLK_UP)
@@ -217,7 +217,7 @@ int main()
                     } else {
                         pacman->rect.x = pacman->rect.x - x_correction + pacman->rect.w;
                     }  
-                    just_go(pacman, "up");
+                    just_go(pacman, 'u');
                     angle = -90;
                 }
                 if (e.key.keysym.sym == SDLK_DOWN)
@@ -229,7 +229,7 @@ int main()
                     } else {
                         pacman->rect.x = pacman->rect.x - x_correction + pacman->rect.w;
                     }                   
-                    just_go(pacman, "down");
+                    just_go(pacman, 'd');
                     angle = 90;
                 }
             }

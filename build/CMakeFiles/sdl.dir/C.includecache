@@ -1,0 +1,32 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/sawy/skola/sdl-pacman/pacman.c
+pacman.h
+/home/sawy/skola/sdl-pacman/pacman.h
+
+/home/sawy/skola/sdl-pacman/pacman.h
+SDL2/SDL.h
+-
+SDL2/SDL_image.h
+-
+SDL2/SDL_ttf.h
+-
+stdbool.h
+-
+time.h
+-
+string.h
+-
+stdlib.h
+-
+
+/home/sawy/skola/sdl-pacman/sdl.c
+pacman.h
+/home/sawy/skola/sdl-pacman/pacman.h
+

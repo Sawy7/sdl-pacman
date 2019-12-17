@@ -1,3 +1,3 @@
-/home/sawy/Insync/nemec.jan123@gmail.com/OneDrive/VŠ/Předměty/Úvod do programování/Homework/Final/sdl/build/CMakeFiles/rebuild_cache.dir
-/home/sawy/Insync/nemec.jan123@gmail.com/OneDrive/VŠ/Předměty/Úvod do programování/Homework/Final/sdl/build/CMakeFiles/sdl.dir
-/home/sawy/Insync/nemec.jan123@gmail.com/OneDrive/VŠ/Předměty/Úvod do programování/Homework/Final/sdl/build/CMakeFiles/edit_cache.dir
+/home/sawy/skola/sdl-pacman/build/CMakeFiles/rebuild_cache.dir
+/home/sawy/skola/sdl-pacman/build/CMakeFiles/sdl.dir
+/home/sawy/skola/sdl-pacman/build/CMakeFiles/edit_cache.dir

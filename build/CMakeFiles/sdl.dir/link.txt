@@ -1,0 +1,1 @@
+/bin/gcc-9 -g   CMakeFiles/sdl.dir/sdl.c.o CMakeFiles/sdl.dir/pacman.c.o  -o sdl -lSDL2 -lSDL2_image -lSDL2_ttf 
