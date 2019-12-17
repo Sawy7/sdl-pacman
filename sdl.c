@@ -255,6 +255,12 @@ int main()
                 }
             }
             //printf("How many points: %d\n", pointCount);
+            if (pointCount == 0)
+            {
+                endgame(array);
+                quit = true;
+            }
+            
 
             //multiple walls
             pointTotal = screenCount;

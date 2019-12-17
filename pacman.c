@@ -98,22 +98,22 @@ void entity_collision(Entity* a, Entity* wall)
     int wall_right = wall->rect.x + wall->rect.w;
     int wall_top = wall->rect.y;
     int wall_bottom = wall->rect.y + wall->rect.h;
-    if (a_bottom > wall_top && a_bottom < (wall_top + (wall->rect.h*0.25)) && a->speed_y > 0 && a_right > wall_left && a_left < wall_right)
+    if (a_bottom >= wall_top && a_bottom < (wall_top + (wall->rect.h*0.25)) && a->speed_y > 0 && a_right > wall_left && a_left < wall_right)
     {
         a->speed_y = 0;
         a->rect.y = wall_top - a->rect.h;
     }
-    if (a_top < wall_bottom && a_top > (wall_bottom - (wall->rect.h*0.25)) && a->speed_y < 0 && a_right > wall_left && a_left < wall_right)
+    if (a_top <= wall_bottom && a_top > (wall_bottom - (wall->rect.h*0.25)) && a->speed_y < 0 && a_right > wall_left && a_left < wall_right)
     {
         a->speed_y = 0;
         a->rect.y = wall_bottom;
     }
-    if (a_right > wall_left && a_right < (wall_left + (wall->rect.w*0.25)) && a->speed_x > 0 && a_bottom > wall_top && a_top < wall_bottom)
+    if (a_right >= wall_left && a_right < (wall_left + (wall->rect.w*0.25)) && a->speed_x > 0 && a_bottom > wall_top && a_top < wall_bottom)
     {
         a->speed_x = 0;
         a->rect.x = wall_left - a->rect.w;
     }
-    if (a_left < wall_right && a_left > (wall_right - (wall->rect.w*0.25)) && a->speed_x < 0 && a_bottom > wall_top && a_top < wall_bottom)
+    if (a_left <= wall_right && a_left > (wall_right - (wall->rect.w*0.25)) && a->speed_x < 0 && a_bottom > wall_top && a_top < wall_bottom)
     {
         a->speed_x = 0;
         a->rect.x = wall_right;
